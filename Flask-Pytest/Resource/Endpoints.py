@@ -1,5 +1,7 @@
 from flask_restful   import Resource , request , jsonify
 from flask  import jsonify , json , abort
+
+
 students = [
     {
         'Name' : 'Ashok',
@@ -14,15 +16,20 @@ students = [
     
 ]
 
+
 class Home(Resource):
     def get(self):
         return "Home Page"
     
 
-class Student_Info(Resource):
+class Student_InfoEdit(Resource):
+    #Endpoint to display the Student information
     def get(self):
         return jsonify({"Students" : students})
-    #To change name of the student
+    
+
+class Student_Edit(Resource):
+    #Endpoint to edit the student name
     def post(self):
         data = request.get_json()
         New_name = data["name"]
@@ -35,4 +42,14 @@ class Student_Info(Resource):
                 continue
         else:
             abort(404)
-    #To add student 
+
+
+class Student_add(Resource):
+    #Endpoint to add student
+    def post(self):
+        data = request.get_json()
+        existing = [student['Roll'] for student in students]
+        if data['roll'] in existing :
+            return jsonify({'response' : "Already Exist"})
+        else:
+            return jsonify({"response" : "Success"})
