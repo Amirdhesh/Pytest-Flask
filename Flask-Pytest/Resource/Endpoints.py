@@ -1,5 +1,5 @@
-from flask_restful   import Resource , request , jsonify
-from flask  import jsonify , json , abort
+from flask_restful   import Resource , request 
+from flask  import jsonify 
 
 
 students = [
@@ -22,14 +22,14 @@ class Home(Resource):
         return "Home Page"
     
 
-class Student_InfoEdit(Resource):
+class Student_Info(Resource):
     #Endpoint to display the Student information
     def get(self):
-        return jsonify({"Students" : students})
+        return jsonify({"Message":"Fetched","Students" : students})
     
 
 class Student_Edit(Resource):
-    #Endpoint to edit the student name
+    #Endpoint to change the student name
     def post(self):
         data = request.get_json()
         New_name = data["name"]
@@ -37,19 +37,24 @@ class Student_Edit(Resource):
         Roll_Numbers = [student['Roll'] for student in students]
         if Roll_No in Roll_Numbers:
             for student in students:
-                if student ['roll'] == Roll_No:
+                if student ['Roll'] == Roll_No:
                     student ['Name'] = New_name
-                continue
+                    return {"Message":"changed"}
+                   
         else:
-            abort(404)
+            return {"Message":"Failed"}
 
 
 class Student_add(Resource):
     #Endpoint to add student
     def post(self):
         data = request.get_json()
-        existing = [student['Roll'] for student in students]
-        if data['roll'] in existing :
-            return jsonify({'response' : "Already Exist"})
+        existing_rollno = [student['Roll'] for student in students]
+        if data['Roll'] in existing_rollno :
+            response = jsonify({'Message' : "Already Exist"})
+            response.status_code = 409
+            return response
         else:
-            return jsonify({"response" : "Success"})
+            response = jsonify({"Message" : "Success"})
+            response.status_code = 200
+            return response
